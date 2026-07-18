@@ -1,0 +1,87 @@
+// ─────────────────────────────────────────
+// GameBoard Skins
+// Each skin sets CSS custom properties.
+// Add a new .skin-* class to create a new skin.
+// ─────────────────────────────────────────
+
+// ── Light (default) ──────────────────────
+.skin-light {
+    --gb-panel-bg:        #ffffff;
+    --gb-panel-border:    rgba(0, 0, 0, 0.08);
+    --gb-panel-shadow:    0 4px 24px rgba(0, 0, 0, 0.08);
+    --gb-accent-line:     linear-gradient(90deg, transparent, #7c3aed, #a855f7, transparent);
+
+    --gb-title-color:     #1e1035;
+    --gb-title-font:      'Rajdhani', sans-serif;
+    --gb-title-glow:      none;
+
+    --gb-player-color:    rgba(0, 0, 0, 0.35);
+
+    --gb-score-bar-bg:    rgba(0, 0, 0, 0.03);
+    --gb-score-bar-border:rgba(0, 0, 0, 0.06);
+    --gb-score-label:     rgba(0, 0, 0, 0.3);
+    --gb-score-value:     #7c3aed;
+    --gb-score-glow:      none;
+
+    --gb-content-bg:      transparent;
+
+    --gb-btn-bg:          linear-gradient(135deg, #6d28d9, #a855f7);
+    --gb-btn-color:       #fff;
+    --gb-btn-shadow:      0 4px 14px rgba(109, 40, 217, 0.3);
+    --gb-btn-shadow-hover:0 6px 20px rgba(109, 40, 217, 0.5);
+
+    --gb-over-title:      #dc2626;
+    --gb-over-glow:       none;
+    --gb-over-score:      rgba(0, 0, 0, 0.4);
+    --gb-over-score-val:  #7c3aed;
+
+    --gb-footer-border:   rgba(0, 0, 0, 0.06);
+    --gb-pill-idle-bg:    rgba(0,0,0,0.05);
+    --gb-pill-idle-color: rgba(0,0,0,0.25);
+    --gb-pill-run-bg:     rgba(22, 163, 74, 0.1);
+    --gb-pill-run-color:  #16a34a;
+    --gb-pill-run-shadow: none;
+    --gb-pill-over-bg:    rgba(220, 38, 38, 0.08);
+    --gb-pill-over-color: #dc2626;
+}
+
+// ── Dark (purple neon) ───────────────────
+.skin-dark {
+    --gb-panel-bg:        linear-gradient(160deg, #12082a 0%, #0d0d1a 100%);
+    --gb-panel-border:    rgba(160, 80, 255, 0.25);
+    --gb-panel-shadow:    0 0 40px rgba(120, 40, 220, 0.15);
+    --gb-accent-line:     linear-gradient(90deg, transparent, #a050ff, #ff50c8, #a050ff, transparent);
+
+    --gb-title-color:     #c880ff;
+    --gb-title-font:      'Orbitron', sans-serif;
+    --gb-title-glow:      0 0 20px rgba(200, 128, 255, 0.5);
+
+    --gb-player-color:    rgba(255, 255, 255, 0.35);
+
+    --gb-score-bar-bg:    rgba(0, 0, 0, 0.2);
+    --gb-score-bar-border:rgba(160, 80, 255, 0.08);
+    --gb-score-label:     rgba(255, 255, 255, 0.25);
+    --gb-score-value:     #ff50c8;
+    --gb-score-glow:      0 0 12px rgba(255, 80, 200, 0.6);
+
+    --gb-content-bg:      transparent;
+
+    --gb-btn-bg:          linear-gradient(135deg, #7020d0, #a050ff);
+    --gb-btn-color:       #fff;
+    --gb-btn-shadow:      0 0 20px rgba(120, 40, 220, 0.4);
+    --gb-btn-shadow-hover:0 0 30px rgba(160, 80, 255, 0.6);
+
+    --gb-over-title:      #ff4466;
+    --gb-over-glow:       0 0 30px rgba(255, 68, 102, 0.5);
+    --gb-over-score:      rgba(255, 255, 255, 0.4);
+    --gb-over-score-val:  #ff50c8;
+
+    --gb-footer-border:   rgba(160, 80, 255, 0.08);
+    --gb-pill-idle-bg:    rgba(255,255,255,0.05);
+    --gb-pill-idle-color: rgba(255,255,255,0.3);
+    --gb-pill-run-bg:     rgba(80, 255, 176, 0.1);
+    --gb-pill-run-color:  #50ffb0;
+    --gb-pill-run-shadow: 0 0 8px rgba(80, 255, 176, 0.2);
+    --gb-pill-over-bg:    rgba(255, 68, 102, 0.1);
+    --gb-pill-over-color: #ff4466;
+}

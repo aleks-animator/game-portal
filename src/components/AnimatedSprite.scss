@@ -1,0 +1,98 @@
+.sprite-root {
+    position: relative;
+    width: 80%;
+    height: 80%;
+}
+
+.sprite-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+}
+
+.sprite-top {
+    clip-path: inset(0 0 42% 0);
+    transform-origin: 50% 88%;
+    animation: idleTop calc(3.6s / var(--speed, 1)) ease-in-out infinite alternate;
+}
+
+.sprite-bottom {
+    clip-path: inset(56% 0 0 0);
+    transform-origin: 50% 20%;
+    animation: idleBottom calc(3.1s / var(--speed, 1)) ease-in-out infinite alternate;
+    animation-delay: -0.4s;
+}
+
+@keyframes idleTop {
+    0%   { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(calc(0.3px * var(--intensity, 1))) rotate(calc(-0.5deg * var(--intensity, 1))); }
+}
+
+@keyframes idleBottom {
+    0%   { transform: translateY(0) rotate(0deg) skewX(0deg); }
+    100% { transform: translateY(calc(-0.2px * var(--intensity, 1))) rotate(calc(1deg * var(--intensity, 1))) skewX(calc(0.6deg * var(--intensity, 1))); }
+}
+
+.sprite-root.attack {
+    animation: lunge 0.55s ease-out;
+    .sprite-top, .sprite-bottom { animation-play-state: paused; }
+}
+
+@keyframes lunge {
+    0%   { transform: translateX(0) scale(1); }
+    35%  { transform: translateX(-22px) scale(1.05) rotate(-2deg); }
+    100% { transform: translateX(0) scale(1); }
+}
+
+.sprite-root.hit {
+    animation: shake 0.4s ease-in-out;
+
+    .sprite-img {
+        animation: flash 0.4s ease-out;
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-9px) rotate(-1deg); }
+    40% { transform: translateX(8px) rotate(1deg); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(3px); }
+}
+
+@keyframes flash {
+    0%   { filter: brightness(0.8) sepia(1) saturate(8) hue-rotate(310deg); }
+    100% { filter: none; }
+}
+
+.sprite-root.heal {
+    animation: pulse 0.5s ease-out;
+
+    .sprite-img {
+        animation: flashGreen 0.5s ease-out;
+    }
+}
+
+@keyframes pulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes flashGreen {
+    0%   { filter: brightness(1.2) sepia(1) saturate(8) hue-rotate(80deg); }
+    100% { filter: none; }
+}
+
+.sprite-root.dead {
+    animation: collapse 1s ease-in forwards;
+}
+
+@keyframes collapse {
+    0%   { transform: rotate(0) translateY(0); opacity: 1; }
+    100% { transform: rotate(14deg) translateY(26px); opacity: 0.2; }
+}

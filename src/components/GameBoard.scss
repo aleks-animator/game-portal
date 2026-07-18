@@ -1,0 +1,195 @@
+@use '../styles/skins';
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700&display=swap');
+
+// ── Panel ──
+.game-panel {
+    width: 100%;
+    max-width: 100%;
+    background: var(--gb-panel-bg);
+    border: 1px solid var(--gb-panel-border);
+    border-radius: 4px;
+    box-shadow: var(--gb-panel-shadow);
+    overflow: hidden;
+    position: relative;
+    font-family: 'Rajdhani', sans-serif;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: var(--gb-accent-line);
+    }
+}
+
+// ── Header ──
+.game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid var(--gb-panel-border);
+}
+
+.game-title {
+    font-family: var(--gb-title-font);
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    color: var(--gb-title-color);
+    text-transform: uppercase;
+    margin: 0;
+    text-shadow: var(--gb-title-glow);
+}
+
+.game-player {
+    font-size: 0.85rem;
+    color: var(--gb-player-color);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+// ── Score bar ──
+.game-score-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    border-bottom: 1px solid var(--gb-score-bar-border);
+    background: var(--gb-score-bar-bg);
+}
+
+.score-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--gb-score-label);
+    text-transform: uppercase;
+}
+
+.score-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    color: var(--gb-score-value);
+    text-shadow: var(--gb-score-glow);
+    min-width: 3ch;
+}
+
+// ── Content area ──
+.game-content {
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    min-height: 260px;
+    justify-content: center;
+}
+
+// ── Idle / Over screens ──
+.game-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+}
+
+.game-over-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    color: var(--gb-over-title);
+    letter-spacing: 0.1em;
+    text-shadow: var(--gb-over-glow);
+    margin: 0;
+}
+
+.game-over-score {
+    font-size: 1rem;
+    color: var(--gb-over-score);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+
+    span {
+        color: var(--gb-over-score-val);
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.4rem;
+        margin-left: 0.5rem;
+    }
+}
+
+// ── Button ──
+.game-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gb-btn-color);
+    background: var(--gb-btn-bg);
+    border: none;
+    border-radius: 3px;
+    padding: 0.75rem 2.5rem;
+    cursor: pointer;
+    box-shadow: var(--gb-btn-shadow);
+    transition: box-shadow 0.2s, transform 0.1s;
+
+    &:hover {
+        box-shadow: var(--gb-btn-shadow-hover);
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+// ── Footer ──
+.game-footer {
+    padding: 0.6rem 2rem;
+    border-top: 1px solid var(--gb-footer-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.game-status-message {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #7c3aed;
+    min-height: 1em;
+    flex: 1;
+    text-align: center;
+    transition: opacity 0.3s ease;
+    opacity: 1;
+
+    &:empty {
+        opacity: 0;
+    }
+}
+
+.game-status-pill {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-weight: 600;
+
+    &.idle {
+        color: var(--gb-pill-idle-color);
+        background: var(--gb-pill-idle-bg);
+    }
+
+    &.running {
+        color: var(--gb-pill-run-color);
+        background: var(--gb-pill-run-bg);
+        box-shadow: var(--gb-pill-run-shadow);
+    }
+
+    &.over {
+        color: var(--gb-pill-over-color);
+        background: var(--gb-pill-over-bg);
+    }
+}

@@ -1,0 +1,85 @@
+.fruit-typer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+// ── Track ──
+.track {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    background-image: url('/src/assets/backgrounds/ultra-wide-paths/path4.png');
+    background-size: cover;
+    background-position: left center;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.track-target {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    user-select: none;
+
+    img {
+        width: 79px;
+        height: 79px;
+        object-fit: contain;
+        margin-left: 20px;
+    }
+}
+
+.track-enemy {
+    position: absolute;
+    top: 40%;
+    font-size: 2rem;
+    user-select: none;
+    z-index: 20;
+}
+
+// ── Freeze zones ──
+.track-zone {
+    position: absolute;
+    top: 50%;
+    width: 160px;
+    height: 160px;
+    transform: translate(-50%, -50%);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.85;
+    z-index: 10;
+}
+
+// ── Input ──
+.fruit-input {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+    outline: none;
+    width: 260px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    color: #1a1a2e;
+
+    &:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+    }
+}
+
+.fruit-word {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #1e1035;
+    text-transform: lowercase;
+}
