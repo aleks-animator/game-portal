@@ -1,34 +1,36 @@
 import { useNavigate } from 'react-router-dom'
 import './GamesPage.scss'
 
-const games = [
+type GameStatus = 'live' | 'soon'
+
+const games: { id: string; title: string; description: string; path: string; status: GameStatus }[] = [
     {
         id: 'fruit-typer',
         title: 'Fruit Typer',
         description: 'Type fruit names to push back the enemy before it reaches your fruit.',
         path: '/fruit-typer',
-        status: 'live' as const,
+        status: 'live',
     },
     {
         id: 'memorize-fruit',
         title: 'Memorize Fruit',
         description: 'Find the matching fruit pair to push back the enemy.',
         path: '/memorize-fruit',
-        status: 'live' as const,
+        status: 'live',
     },
     {
         id: 'memorize-fruit-duel',
         title: 'Memorize Fruit: Duel',
         description: 'Find matching fruit pairs to deal damage in a turn-based duel.',
         path: '/memorize-fruit-duel',
-        status: 'live' as const,
+        status: 'live',
     },
     {
         id: 'test-game',
         title: 'Test Game',
         description: 'Internal test game.',
         path: '/test-game',
-        status: 'live' as const,
+        status: 'live',
     },
 ]
 

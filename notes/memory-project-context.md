@@ -199,25 +199,8 @@ quality = base + timeBonus
 - `combo1` (3 streak): heal player by `config.healAmount`
 - `combo2` (6 streak): heal player to full
 
-## What's NEXT to build
-1. **`VisualSelection` component** — for enemy intro between duel rounds
-   - Props: `images: string[]`, `selected: string`, `minCount?: number` (default 8), `onComplete: () => void`
-   - Behavior: pick 8-10 random images from array, fade them in one by one fast in masonry grid, 1-2s anticipation animation, then selected one reveals dramatically (big, full game frame)
-   - The selected image is NOT visually distinguished in the grid until the reveal begins
-   - Auto-dismisses (calls `onComplete`) after reveal — no CTA needed yet
-
-2. **Story pause mechanism** — story signals game to pause during animation sequences
-   - Needed so player can't flip cards during the ~3s duel combat animation
-   - Approach: add `isLocked?: boolean` to `StoryAPI`, game checks it before processing input
 
 ## Score Contract
 ```ts
 scoreService.gameEnded(gameId, score, player)
 ```
-
-## Curriculum Progress
-- Phase 1-5.5: Complete (Vite, TypeScript, React, Supabase, FruitTyper, EnemyTrack story)
-- Phase 6: MemorizeFruit ✅ (complete, both EnemyTrack and Duel variants)
-- Phase 7: Duel story ✅ (HP system, sprites, combat animation)
-- In progress: VisualSelection component, story pause mechanism, balance pass
-- Later: leaderboard, team selection, token wallet, Sanity CMS

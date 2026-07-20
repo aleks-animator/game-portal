@@ -5,6 +5,11 @@
 .game-panel {
     width: 100%;
     max-width: 100%;
+    // floor height so idle/running/overlay all agree on size — only the running game's
+    // own content (children) can push this taller, idle/over screens never do
+    min-height: 900px;
+    display: flex;
+    flex-direction: column;
     background: var(--gb-panel-bg);
     border: 1px solid var(--gb-panel-border);
     border-radius: 4px;
@@ -24,10 +29,11 @@
 
 // ── Header ──
 .game-header {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.25rem 2rem;
+    padding: 0.6rem 2rem;
     border-bottom: 1px solid var(--gb-panel-border);
 }
 
@@ -50,6 +56,7 @@
 
 // ── Score bar ──
 .game-score-bar {
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -75,7 +82,9 @@
 
 // ── Content area ──
 .game-content {
-    padding: 3rem 2rem;
+    position: relative;
+    flex: 1;
+    padding: 1rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -91,6 +100,40 @@
     align-items: center;
     gap: 1.5rem;
     text-align: center;
+
+    // idle screen: pinned to .game-content's own box (not the whole panel — that would
+    // reach under the header/footer bars) so the cover image reads as full box art
+    &--cover {
+        position: absolute;
+        inset: 0;
+
+        .game-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+
+            // .game-btn:hover/:active set their own transform (translateY), which would
+            // otherwise replace this centering transform outright instead of adding to it
+            &:hover {
+                transform: translate(-50%, -50%) translateY(-1px);
+            }
+
+            &:active {
+                transform: translate(-50%, -50%) translateY(0);
+            }
+        }
+    }
+}
+
+.game-cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
 }
 
 .game-over-title {
@@ -144,6 +187,7 @@
 
 // ── Footer ──
 .game-footer {
+    flex-shrink: 0;
     padding: 0.6rem 2rem;
     border-top: 1px solid var(--gb-footer-border);
     display: flex;

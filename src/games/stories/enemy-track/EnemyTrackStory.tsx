@@ -41,7 +41,7 @@ export function EnemyTrackStory({ children, config, enemyAnimation }: Props) {
         />
     ), [isFrozen, config, enemyAnimation])
 
-    const api: StoryAPI = { gameStatus, score, startGame, emitQuality, renderSlot , emitCombo , storyMessage}
+    const api: StoryAPI = { gameStatus, score, startGame, emitQuality, renderSlot, isLocked: false, emitCombo, storyMessage }
 
     return (
         <StoryCtx.Provider value={api}>

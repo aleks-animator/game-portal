@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useState } from "react"
 import type { GameStatus } from "../types"
+import { defaultCover } from "../assets/gamecovers/default"
 import './GameBoard.scss'
 
 export type GameBoardProps = {
@@ -14,9 +15,10 @@ export type GameBoardProps = {
     startMessage?: string
     skin?: 'light' | 'dark'
     overlay?: ReactNode
+    coverImage?: string
 }
 
-function GameBoard({ title, score, children, gameStatus, playerName, onStart, statusMessage, idleMessage, startMessage, skin = 'light', overlay }: GameBoardProps) {
+function GameBoard({ title, score, children, gameStatus, playerName, onStart, statusMessage, idleMessage, startMessage, skin = 'light', overlay, coverImage = defaultCover }: GameBoardProps) {
     const [activeStartMessage, setActiveStartMessage] = useState('')
 
     useEffect(() => {
@@ -46,7 +48,8 @@ function GameBoard({ title, score, children, gameStatus, playerName, onStart, st
 
                 <div className="game-content">
                     {gameStatus === 'idle' && (
-                        <div className="game-screen">
+                        <div className="game-screen game-screen--cover">
+                            <img className="game-cover" src={coverImage} alt="" />
                             <button className="game-btn" onClick={onStart}>Start Game</button>
                         </div>
                     )}

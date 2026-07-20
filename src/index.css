@@ -104,3 +104,10 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.back-home-link {
+  display: inline-block;
+  margin: 24px 0;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}

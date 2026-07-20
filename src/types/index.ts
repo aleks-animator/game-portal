@@ -35,3 +35,7 @@ export type Team = {
 }
 
 export type GameStatus = 'idle' | 'running' | 'over'
+
+// 'default': round continues through neutral matches, time only affects bonus score
+// 'strict': a neutral match or hitting 0 time ends the round immediately (quality 0)
+export type GameMode = 'default' | 'strict'

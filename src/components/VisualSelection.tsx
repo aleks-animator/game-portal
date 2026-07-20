@@ -43,10 +43,10 @@ export function VisualSelection({ simple, images, selected, selectionText, minCo
     useEffect(() => {
         const duration =
             phase === 'grid'
-                ? 3000
+                ? 2000
                 : phase === 'anticipation'
-                    ? 2000
-                    : 4500
+                    ? 2500
+                    : 2500
         const timeout = setTimeout(() => {
             switch (phase) {
                 case 'grid':

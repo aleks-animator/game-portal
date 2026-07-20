@@ -11,6 +11,7 @@ export type StoryAPI = {
     storyMessage?: string
     isLocked: boolean
     overlay?: ReactNode
+    coverImage?: string
 }
 
 const defaultAPI: StoryAPI = {

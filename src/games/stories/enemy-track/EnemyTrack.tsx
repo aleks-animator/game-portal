@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import type { MotionValue } from "framer-motion"
-import type { EnemyTrackConfig } from "./useEnemyTrack.ts"
+import type { EnemyTrackConfig } from "./enemyTrackConfig.ts"
 import zoneMarker from "../../../assets/backgrounds/markers/marker3.png";
 import {motion, useTransform, type Variants} from "framer-motion";
 import LottieReact from 'lottie-react'

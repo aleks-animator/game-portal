@@ -76,45 +76,29 @@ Was `duelStory.tsx` (lowercase d) on disk, causing TS1261 casing error. Renamed 
 
 ---
 
-## Next to build
+## Since this handover was written — both "next to build" items are DONE
 
-### 1. VisualSelection component
-**Purpose:** Dramatic enemy intro reveal between duel rounds.
+### 1. VisualSelection component — DONE
+Built at [VisualSelection.tsx](src/components/VisualSelection.tsx) + `VisualSelection.scss`. Matches the agreed props plus one addition: `selectionText?: string` (villain name shown in the reveal bar) and a `simple?: boolean` escape hatch (skips straight to `'reveal'` phase).
 
-**Props agreed:**
-```ts
-type Props = {
-    images: string[]       // all available portraits to pick from
-    selected: string       // the actual enemy portrait to reveal
-    minCount?: number      // minimum to show in grid (default 8)
-    onComplete: () => void // called when reveal animation finishes
-}
-```
+Actual behavior:
+- 3-phase state machine: `'grid'` (3s) → `'anticipation'` (2s) → `'reveal'` (4.5s), then calls `onComplete()`
+- Grid picks `minCount` (default 8) + 0-2 random images, `selected` inserted at a random index ≥1
+- CSS masonry grid (`VisualSelection.scss`) hand-tuned per `data-count` (2 through 10) for column spans
+- Anticipation phase: selected image gets a glowing yellow outline (`.anticipating`), others go grayscale (`.fading`)
+- Reveal phase: full-frame card-flip animation (`cardFlip` keyframe) on the selected image, with a name bar that fades in after 1s via `showName` state
 
-**Behavior:**
-- Randomly picks 8-10 images from `images` array (must include `selected`)
-- Displays them in a masonry grid, fading in one by one, fast
-- 1-2s anticipation pause (some animation/icon)
-- Selected image gets dramatic reveal — expands to fill the full game frame
-- Selected is NOT visually distinguished in grid until reveal begins
-- Auto-calls `onComplete()` after reveal — no CTA button yet
-- Takes full game frame width/height (not browser fullscreen)
+**Wired into** [DuelStory.tsx](src/games/stories/duel/DuelStory.tsx): rendered as `overlay` both in `startGame()` (first villain) and in a `useEffect` on `enemyCount` change (subsequent villains). Villain data now comes from `src/assets/villains.ts` (not the `portraits/fantasyvillains/index.ts` array assumed in the original plan — check [villains.ts](src/assets/villains.ts) for the current shape, it wasn't re-read this pass).
 
-**Where it will be used:** `DuelStory.tsx` — shown when `enemyCount` changes (new enemy spawned). Portrait images come from `src/assets/portraits/fantasyvillains/index.ts` (`villainPortraits` array).
+### 2. Story pause mechanism — DONE
+`isLocked: boolean` and `overlay?: ReactNode` are both real, non-optional-in-practice fields on `StoryAPI` ([storyContext.tsx](src/games/stories/storyContext.tsx)).
+- `DuelStory` sets `isLocked` true/false around both the `VisualSelection` overlay and the combat animation sequence (t=0 to t=3100).
+- `GameBoard.tsx` renders `overlay` in an absolutely-positioned layer above `children`, and hides `children` while `overlay` is set (`gameStatus === 'running' && !overlay`).
+- `MemorizeFruit.tsx` checks `isLocked` to gate the timer countdown effect and `handleCardClick`, and dims the board with a semi-transparent layer while locked.
 
-### 2. Story pause mechanism
-**Purpose:** Lock game input during story animation sequences (e.g. 3.1s duel combat).
-
-**Approach:** Add `isLocked?: boolean` to `StoryAPI`. Game checks it in `handleCardClick` before processing. Story sets it true at start of animation sequence, false at end.
-
-**Why not done yet:** Intro (VisualSelection) runs during 'idle' state so no conflict. Pause is needed for mid-game combat lock — can be added after intro.
-
-### 3. Balance pass
-- Damage numbers, HP values, quality thresholds
-- Timer speeds and bonus multipliers
-
-### 4. Enemy intro wiring into DuelStory
-After VisualSelection exists: track `enemyCount` changes in `DuelStory`, show `VisualSelection` overlay with correct portrait, resume game on `onComplete`.
+### Still open
+- Balance pass (damage numbers, HP values, quality thresholds, timer speeds/bonus multipliers) — not touched.
+- No other "next" item was identified this pass; re-derive from current code/git log rather than trusting older planning notes below, which are now stale.
 
 ---
 

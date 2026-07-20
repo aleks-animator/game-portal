@@ -1,4 +1,4 @@
-import {Route, Routes} from "react-router-dom";
+import {Link, Route, Routes, useLocation} from "react-router-dom";
 import CompetitionPage from "./pages/CompetitionPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import Navbar from "./components/Navbar.tsx";
@@ -11,11 +11,20 @@ import MemorizeFruit, { MemorizeFruitDuelGame } from "./games/memorize-fruit/Mem
 import GamesPage from "./pages/GamesPage.tsx";
 import SpriteSandbox from "./pages/SpriteSandbox.tsx";
 
+const GAME_ROUTES = ['/fruit-typer', '/memorize-fruit', '/memorize-fruit-duel']
+
 function App() {
+  const location = useLocation()
+  const isGameRoute = GAME_ROUTES.includes(location.pathname)
+
   return (
     <div>
-      <h1>Game Portal</h1>
-        <Navbar/>
+      {!isGameRoute && (
+        <>
+          <h1>Game Portal</h1>
+          <Navbar/>
+        </>
+      )}
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/games" element={<GamesPage />} />
@@ -29,6 +38,7 @@ function App() {
             <Route path="/memorize-fruit-duel" element={<MemorizeFruitDuelGame />} />
             <Route path="/sprite-sandbox" element={<SpriteSandbox />} />
         </Routes>
+      {isGameRoute && <Link to="/" className="back-home-link">← Back to Home</Link>}
     </div>
   )
 }
