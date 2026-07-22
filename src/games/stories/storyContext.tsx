@@ -12,6 +12,9 @@ export type StoryAPI = {
     isLocked: boolean
     overlay?: ReactNode
     coverImage?: string
+    // story→game event: an opaque difficulty token the game interprets however it likes.
+    // `id` bumps on every emit so re-emitting the same value still triggers the game's effect.
+    difficulty?: { value: number; id: number }
 }
 
 const defaultAPI: StoryAPI = {

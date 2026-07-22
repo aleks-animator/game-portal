@@ -1,0 +1,142 @@
+.fruit-snake {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    width: 100%;
+}
+
+.snake-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    max-width: 360px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    .hud-target strong {
+        color: #7c3aed;
+    }
+
+    .hud-progress {
+        font-weight: 700;
+        color: #7c3aed;
+    }
+}
+
+.snake-board {
+    display: grid;
+    grid-template-columns: repeat(var(--cols, 12), 1fr);
+    grid-template-rows: repeat(var(--rows, 6), 1fr);
+    gap: 2px;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: var(--cols, 12) / var(--rows, 6);
+    padding: 6px;
+    border-radius: 10px;
+    // dark frame around the grid keeps the light gray blocks readable against the page
+    background: #23262b;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+
+    // cells intentionally overflow a touch (see .cell-fruit) — the board itself must not
+    // clip that, so no overflow:hidden here despite the rounded corners
+    &.dying {
+        animation: boardShake 0.5s ease-in-out;
+    }
+
+    // win uses a vertical bounce/scale pop instead of the death's side-to-side shake,
+    // so success reads as distinctly different motion, not just a different color
+    &.winning {
+        animation: boardBounce 0.5s ease-in-out;
+    }
+}
+
+.snake-cell {
+    position: relative;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // light gray cell: a soft diagonal gradient plus a beveled edge (light top-left,
+    // dark bottom-right) so it still reads as a small block, no repeating texture
+    background: linear-gradient(135deg, #e2e4e7 0%, #cdd0d4 100%);
+    box-shadow:
+        inset 1px 1px 0 rgba(255, 255, 255, 0.6),
+        inset -1px -1px 0 rgba(0, 0, 0, 0.15);
+
+    // snake segments: opaque diagonal acrylic-style gradient (Fluent-Design inspired —
+    // solid color stops, no translucency), square corners matching the cell, just a
+    // thin highlight edge for depth instead of an outer glow
+    &.body {
+        border-radius: 3px;
+        background: linear-gradient(135deg, #0f9d58 0%, #12b866 40%, #0a7a45 100%);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.35),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    &.head {
+        border-radius: 3px;
+        background: linear-gradient(135deg, #17cf74 0%, #1fe085 40%, #0f9d58 100%);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.45),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+            0 0 4px rgba(18, 184, 102, 0.5);
+        z-index: 2;
+    }
+
+    &.dying {
+        background: #e53935 !important;
+        box-shadow: 0 0 10px rgba(229, 57, 53, 0.8) !important;
+    }
+
+    &.winning {
+        background: #ffd600 !important;
+        box-shadow: 0 0 10px rgba(255, 214, 0, 0.85) !important;
+    }
+}
+
+.cell-fruit {
+    // sized a hair over the cell so it barely overflows — rendered from the cell's own
+    // center via absolute positioning so the overflow spills evenly on every side
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 112%;
+    height: 112%;
+    object-fit: contain;
+
+    &.target {
+        filter: drop-shadow(0 0 5px rgba(255, 214, 64, 0.9));
+        animation: targetPulse 1s ease-in-out infinite;
+    }
+
+    &.obstacle {
+        opacity: 0.9;
+    }
+}
+
+@keyframes targetPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50%      { transform: translate(-50%, -50%) scale(1.12); }
+}
+
+@keyframes boardShake {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-6px); }
+    40%      { transform: translateX(6px); }
+    60%      { transform: translateX(-4px); }
+    80%      { transform: translateX(4px); }
+}
+
+@keyframes boardBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30%      { transform: translateY(-10px) scale(1.02); }
+    55%      { transform: translateY(0) scale(1); }
+    75%      { transform: translateY(-4px) scale(1.01); }
+}

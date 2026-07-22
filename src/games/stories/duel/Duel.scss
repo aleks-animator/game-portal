@@ -27,13 +27,44 @@
 
     .duel-side {
         .sprite-root {
-            width: 310px;
-            height: 375px;
+            width: 335px;
+            height: 405px;
         }
     }
 
     .player-side {
         transform: scaleX(-1);
+    }
+
+    // floating combat banner — sits above the HP-bar footer, below the fighters
+    .duel-message {
+        position: absolute;
+        left: 50%;
+        bottom: 56px;
+        transform: translateX(-50%);
+        z-index: 3;
+        padding: 6px 22px;
+        border-radius: 999px;
+        white-space: nowrap;
+        // semi-transparent gradient plate with a gold hairline frame + inner glow
+        background: linear-gradient(135deg, rgba(24, 14, 46, 0.82), rgba(58, 22, 78, 0.82));
+        border: 1px solid rgba(255, 215, 0, 0.55);
+        box-shadow:
+            0 6px 18px rgba(0, 0, 0, 0.55),
+            inset 0 0 14px rgba(255, 215, 0, 0.12);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        animation: duelMsgPop 0.28s cubic-bezier(0.2, 1.2, 0.4, 1);
+
+        span {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #ffe9a8;                              // warm light text for contrast
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);  // crisp against the plate
+        }
     }
 
     .duel-footer {
@@ -100,4 +131,9 @@
     .enemy-info .hp-text {
         text-align: right;
     }
+}
+
+@keyframes duelMsgPop {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(8px) scale(0.9); }
+    100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
 }

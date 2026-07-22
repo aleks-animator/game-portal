@@ -88,8 +88,20 @@
     100% { filter: none; }
 }
 
+.sprite-root.dodge {
+    animation: sidestep 0.5s ease-out;
+    .sprite-top, .sprite-bottom { animation-play-state: paused; }
+}
+
+// enemy hops back (enemy faces left and isn't mirrored, so "back" = screen-right = +X)
+@keyframes sidestep {
+    0%   { transform: translateX(0); }
+    40%  { transform: translateX(26px) rotate(3deg); }
+    100% { transform: translateX(0); }
+}
+
 .sprite-root.dead {
-    animation: collapse 1s ease-in forwards;
+    animation: collapse 1.5s ease-in forwards;
 }
 
 @keyframes collapse {

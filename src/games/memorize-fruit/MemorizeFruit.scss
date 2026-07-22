@@ -47,15 +47,27 @@
     max-width: 360px;
 }
 
+// ── Card slot: the grid cell. Owns the row-swap slide so the inner .card is free to
+// keep the flip transform. gap here must match .card-grid's gap (0.75rem). ──
+.card-slot {
+    width: 100%;
+    aspect-ratio: 1;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.swap-down { transform: translateY(calc(100% + 0.75rem)); }
+    &.swap-up   { transform: translateY(calc(-100% - 0.75rem)); }
+}
+
 // ── Flip card ──
 .card {
     position: relative;
     width: 100%;
-    aspect-ratio: 1;
+    height: 100%;
     cursor: pointer;
     perspective: 600px;
     transform-style: preserve-3d;
-    transition: transform 0.3s ease-in-out;
+    // flip speed as a variable — default sped up; difficulty 3 overrides --flip-duration
+    transition: transform var(--flip-duration, 0.18s) ease-in-out;
 
     &.flipped {
         transform: rotateY(180deg);

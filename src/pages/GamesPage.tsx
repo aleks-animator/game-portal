@@ -26,6 +26,13 @@ const games: { id: string; title: string; description: string; path: string; sta
         status: 'live',
     },
     {
+        id: 'fruit-snake-duel',
+        title: 'Fruit Snake: Duel',
+        description: 'Slither to collect the target fruit and dodge obstacles to strike in a duel.',
+        path: '/fruit-snake-duel',
+        status: 'live',
+    },
+    {
         id: 'test-game',
         title: 'Test Game',
         description: 'Internal test game.',

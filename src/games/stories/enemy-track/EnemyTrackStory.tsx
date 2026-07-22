@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useState } from "react"
+import { type ReactNode, useState } from "react"
 import { useMotionValue, animate } from "framer-motion"
 import { useEnemyTrack } from "./useEnemyTrack.ts"
 import type { EnemyTrackConfig } from "./enemyTrackConfig.ts"
@@ -30,7 +30,7 @@ export function EnemyTrackStory({ children, config, enemyAnimation }: Props) {
     }
 
 
-    const renderSlot = useCallback((targetSlot: ReactNode) => (
+    const renderSlot = (targetSlot: ReactNode) => (
         <EnemyTrack
             config={config}
             enemyPosition={enemyPosition}
@@ -39,7 +39,7 @@ export function EnemyTrackStory({ children, config, enemyAnimation }: Props) {
             targetSlot={targetSlot}
             bounceX={bounceX}
         />
-    ), [isFrozen, config, enemyAnimation])
+    )
 
     const api: StoryAPI = { gameStatus, score, startGame, emitQuality, renderSlot, isLocked: false, emitCombo, storyMessage }
 

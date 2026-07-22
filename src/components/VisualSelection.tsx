@@ -8,12 +8,13 @@ type Props = {
     images: string[]
     selected: string
     selectionText?: string
+    selectionSubtitle?: string
     minCount?: number
     onComplete: () => void
     simple?: boolean
 }
 
-export function VisualSelection({ simple, images, selected, selectionText, minCount = 8, onComplete }: Props) {
+export function VisualSelection({ simple, images, selected, selectionText, selectionSubtitle, minCount = 8, onComplete }: Props) {
     const [phase, setPhase] = useState<SelectionPhase>(simple ? 'reveal' : 'grid')
     const [shownImages, setShownImages] = useState<string[]>([])
     const [selectedIndex, setSelectedIndex] = useState(0)
@@ -90,7 +91,8 @@ export function VisualSelection({ simple, images, selected, selectionText, minCo
                     <img src={selected} alt="" className="reveal-image" />
                     {selectionText && (
                         <div className={`reveal-name ${showName ? 'visible' : ''}`}>
-                            <span>{selectionText}</span>
+                            <span className="reveal-title">{selectionText}</span>
+                            {selectionSubtitle && <span className="reveal-subtitle">{selectionSubtitle}</span>}
                         </div>
                     )}
                 </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import './AnimatedSprite.scss'
 
-export type SpriteState = 'idle' | 'attack' | 'hit' | 'heal' | 'dead'
+export type SpriteState = 'idle' | 'attack' | 'hit' | 'heal' | 'dead' | 'dodge'
 
 type Props = {
     src: string
@@ -16,6 +16,10 @@ export function AnimatedSprite({ src, state = 'idle', intensity = 1, speed = 1 }
     useEffect(() => {
         if (state === 'idle') { setAnimClass(''); return }
         setAnimClass(state)
+        // 'dead' is terminal — hold the (forwards) collapse until the state is explicitly
+        // reset to idle when the next enemy loads. Auto-clearing it would revert the sprite
+        // to idle mid-death.
+        if (state === 'dead') return
         const t = setTimeout(() => setAnimClass(''), 900)
         return () => clearTimeout(t)
     }, [state])

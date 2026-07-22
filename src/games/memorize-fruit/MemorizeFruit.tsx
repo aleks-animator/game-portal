@@ -23,8 +23,22 @@ type Card = {
     isMatched: boolean
 }
 
+// game-owned interpretation of the story's difficulty token → a concrete condition
+type DifficultyCondition = {
+    extraPairs: number   // additional card pairs (each pair = +2 cards)
+    rowSwapMs: number    // if > 0, the two card rows swap positions on this interval
+    flipMs: number       // if > 0, overrides the card flip duration (slower flips)
+}
+
+const DIFFICULTY_CONDITIONS: Record<number, DifficultyCondition> = {
+    0: { extraPairs: 0, rowSwapMs: 0, flipMs: 0 },
+    1: { extraPairs: 1, rowSwapMs: 0, flipMs: 0 },      // +2 cards
+    2: { extraPairs: 0, rowSwapMs: 6000, flipMs: 0 },   // rows swap every 6s
+    3: { extraPairs: 0, rowSwapMs: 0, flipMs: 600 },    // slower card flips
+}
+
 function MemorizeFruit ( { config } : {config: MemorizeFruitConfig} ) {
-    const { gameStatus, score, startGame: storyStartGame, emitQuality, emitCombo, storyMessage, isLocked, overlay, coverImage } = useStory()
+    const { gameStatus, score, startGame: storyStartGame, emitQuality, emitCombo, storyMessage, isLocked, overlay, coverImage, difficulty } = useStory()
     const [cards, setCards] = useState<Card[]>([])
     const [targetFruit, setTargetFruit] = useState<FruitName>('apple')
     const [flippedIds, setFlippedIds] = useState<number[]>([])
@@ -33,9 +47,12 @@ function MemorizeFruit ( { config } : {config: MemorizeFruitConfig} ) {
     // bumped each round so the timer bar (keyed on this) remounts and its CSS animation
     // restarts cleanly from 100% — see the .timer-bar comment in MemorizeFruit.scss
     const [roundKey, setRoundKey] = useState(0)
+    const [rowsSwapped, setRowsSwapped] = useState(false)
     const roundStartRef = useRef<number>(0)
     const comboStreakRef = useRef(0)
     const timeLimitRef = useRef(TIME_LIMIT)
+    const difficultyRef = useRef(0)
+    const handledDiffIdRef = useRef<number | null>(null)
     const [isPenalized] = useState(false)
     const [targetMatchedIds, setTargetMatchedIds] = useState<number[]>([])
     const [neutralMatchedIds, setNeutralMatchedIds] = useState<number[]>([])
@@ -65,7 +82,45 @@ function MemorizeFruit ( { config } : {config: MemorizeFruitConfig} ) {
         setTimeout(() => startRound(), BETWEEN_ROUND_INTERVAL)
     }, [config.gameMode, timeLeft, isLocked, gameStatus])
 
+    // Apply a new enemy's difficulty once its VisualSelection reveal has finished (game
+    // unlocked). The difficulty event fires while the reveal overlay is still up (locked),
+    // so we gate on !isLocked to defer until the reveal is done, then re-deal the round with
+    // the new card count and announce it. De-duped by the event id → runs once per enemy.
+    useEffect(() => {
+        if (gameStatus !== 'running') return
+        if (isLocked) return
+        if (!difficulty) return
+        if (difficulty.id === handledDiffIdRef.current) return
+        handledDiffIdRef.current = difficulty.id
+        difficultyRef.current = difficulty.value
+        startRound()
+        const cond = DIFFICULTY_CONDITIONS[difficulty.value] ?? DIFFICULTY_CONDITIONS[0]
+        const note = cond.extraPairs > 0 ? `+${cond.extraPairs * 2} cards`
+            : cond.rowSwapMs > 0 ? `rows swap every ${cond.rowSwapMs / 1000}s`
+                : cond.flipMs > 0 ? 'slower card flips'
+                    : ''
+        if (note) showStatus(`Difficulty ${difficulty.value} — ${note}`)
+    }, [difficulty, isLocked, gameStatus])
+
+    // difficulty 2: swap the two card rows every rowSwapMs so memorised positions get
+    // scrambled. A fresh interval is built per round (roundKey dep) — so the 6s clock
+    // restarts each round — and torn down while locked (reveal/combat), so it never runs
+    // behind an overlay. Not keyed on rowsSwapped: one steady interval, constant cadence.
+    useEffect(() => {
+        if (gameStatus !== 'running') return
+        if (isLocked) return
+        const rowSwapMs = DIFFICULTY_CONDITIONS[difficultyRef.current]?.rowSwapMs ?? 0
+        if (rowSwapMs <= 0) return
+        const interval = setInterval(() => setRowsSwapped(s => !s), rowSwapMs)
+        return () => clearInterval(interval)
+    }, [isLocked, gameStatus, roundKey])
+
     function startGame() {
+        // reset per-game refs that ramp across rounds — otherwise "Play Again" inherits the
+        // previous game's shrunken time limit / combo streak (only a page refresh reset them)
+        timeLimitRef.current = TIME_LIMIT
+        comboStreakRef.current = 0
+        handledDiffIdRef.current = null
         storyStartGame()
         startRound()
     }
@@ -86,6 +141,12 @@ function MemorizeFruit ( { config } : {config: MemorizeFruitConfig} ) {
         setNeutralMatches(0)
         setTimeLeft(timeLimitRef.current)
         setRoundKey(k => k + 1)
+        setRowsSwapped(false)   // each round starts in the un-swapped orientation
+    }
+
+    // base pairs + the current difficulty's extra pairs
+    function effectivePairCount(): number {
+        return config.pairCount + (DIFFICULTY_CONDITIONS[difficultyRef.current]?.extraPairs ?? 0)
     }
 
     function calculateQuality(): number {
@@ -100,23 +161,11 @@ function MemorizeFruit ( { config } : {config: MemorizeFruitConfig} ) {
         return 1 + 0.1 * timeLeft
     }
 
-    function qualityMessage(quality: number): string {
-        return quality >= 2 ? 'great damage!'
-            : quality >= 1.5 ? 'moderate damage'
-                : 'miss'
-    }
-
-    function strictQualityMessage(quality: number): string {
-        return quality >= 1.6 ? 'great damage!'
-            : quality >= 1.2 ? 'moderate damage'
-                : 'hit'
-    }
-
     function dealCards(target: FruitName) {
         const selected = new Set<FruitName>()
         selected.add(target)
 
-        while (selected.size < config.pairCount) {
+        while (selected.size < effectivePairCount()) {
             selected.add(getRandomItem(fruitNames))
         }
 
@@ -155,14 +204,12 @@ function MemorizeFruit ( { config } : {config: MemorizeFruitConfig} ) {
 
                     if (config.gameMode === 'strict') {
                         const quality = calculateStrictQuality()
-                        showStatus(strictQualityMessage(quality))
                         emitQuality(quality)
                     } else {
                         const hasAllNeutrals = neutralMatches >= 3
                         if (hasAllNeutrals) { comboStreakRef.current += 1 } else { comboStreakRef.current = 0 }
                         emitCombo?.({ combo1: comboStreakRef.current >= 3, combo2: comboStreakRef.current >= 6 })
                         const quality = calculateQuality()
-                        if (comboStreakRef.current < 3) showStatus(qualityMessage(quality))
                         emitQuality(quality)
                     }
                     setTimeout(() => {
@@ -200,6 +247,13 @@ function MemorizeFruit ( { config } : {config: MemorizeFruitConfig} ) {
         }
     }
 
+    // grid is 2 rows of `cols`. Rather than reorder the DOM (which would jump), keep card
+    // order stable and slide each row into the other's place via a transform on the wrapper —
+    // row-1 cards move down one row, row-2 cards move up — so the swap animates.
+    const cols = Math.floor(cards.length / 2)
+    // difficulty 3 overrides the flip duration (slower); 0 → falls back to the SCSS default
+    const flipMs = DIFFICULTY_CONDITIONS[difficultyRef.current]?.flipMs ?? 0
+
     if (!player) return <p>Loading...</p>
     return (
         <GameBoard
@@ -218,16 +272,21 @@ function MemorizeFruit ( { config } : {config: MemorizeFruitConfig} ) {
                     <div className="target-row">
                         <p className="target-label">Find: <strong>{targetFruit}</strong></p>
                     </div>
-                    <div className="card-grid" style={{ '--cols': config.pairCount } as React.CSSProperties}>
-                        {cards.map(card => (
-                            <div key={card.id} className={`card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''} ${targetMatchedIds.includes(card.id) ? 'target-matched' : ''} ${neutralMatchedIds.includes(card.id) ? 'neutral-matched' : ''}`} onClick={() => handleCardClick(card)}>
-                                <div className="card-front" />
-                                <div className="card-back">
-                                    <img src={fruitImages[card.fruit]} alt={card.fruit} />
-                                    <span className="card-match-label">match</span>
+                    <div className="card-grid" style={{ '--cols': cards.length / 2 || config.pairCount, '--flip-duration': flipMs > 0 ? `${flipMs}ms` : undefined } as React.CSSProperties}>
+                        {cards.map((card, i) => {
+                            const swapClass = rowsSwapped && cols > 0 ? (i < cols ? 'swap-down' : 'swap-up') : ''
+                            return (
+                                <div key={card.id} className={`card-slot ${swapClass}`}>
+                                    <div className={`card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''} ${targetMatchedIds.includes(card.id) ? 'target-matched' : ''} ${neutralMatchedIds.includes(card.id) ? 'neutral-matched' : ''}`} onClick={() => handleCardClick(card)}>
+                                        <div className="card-front" />
+                                        <div className="card-back">
+                                            <img src={fruitImages[card.fruit]} alt={card.fruit} />
+                                            <span className="card-match-label">match</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                     <div className="timer-row">
                         <span className="timer-label">{config.gameMode === 'strict' ? 'remaining' : 'bonus'}</span>

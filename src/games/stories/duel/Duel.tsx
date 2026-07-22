@@ -14,9 +14,10 @@ type Props = {
     villainOffset: number
     heroState?: SpriteState
     enemyState?: SpriteState
+    message?: string
 }
 
-export function Duel({ playerHp, maxPlayerHp, enemyHp, maxEnemyHp, enemyCount, villainOffset, heroState, enemyState }: Props) {
+export function Duel({ playerHp, maxPlayerHp, enemyHp, maxEnemyHp, enemyCount, villainOffset, heroState, enemyState, message }: Props) {
     const { player } = usePlayerContext()
     const playerPct = Math.max(0, (playerHp / maxPlayerHp) * 100)
     const enemyPct = Math.max(0, (enemyHp / maxEnemyHp) * 100)
@@ -33,6 +34,12 @@ export function Duel({ playerHp, maxPlayerHp, enemyHp, maxEnemyHp, enemyCount, v
                     <AnimatedSprite src={villain.sprite} intensity={1.5} speed={1.9} state={enemyState} />
                 </div>
             </div>
+            {message && (
+                // keyed on the text so each new message re-triggers the pop-in animation
+                <div className="duel-message" key={message}>
+                    <span>{message}</span>
+                </div>
+            )}
             <div className="duel-footer">
                 <div className="fighter-info">
                     <span className="fighter-name">{player?.nickname ?? 'Hero'}</span>

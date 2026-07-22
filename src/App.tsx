@@ -8,10 +8,11 @@ import TestGame from "./games/test-game/TestGame.tsx";
 import AssetsPage from "./pages/AssetsPage.tsx";
 import FruitTyper from "./games/fruit-typer/FruitTyper.tsx";
 import MemorizeFruit, { MemorizeFruitDuelGame } from "./games/memorize-fruit/MemorizeFruit.tsx";
+import FruitSnakeDuelGame from "./games/fruit-snake/FruitSnake.tsx";
 import GamesPage from "./pages/GamesPage.tsx";
 import SpriteSandbox from "./pages/SpriteSandbox.tsx";
 
-const GAME_ROUTES = ['/fruit-typer', '/memorize-fruit', '/memorize-fruit-duel']
+const GAME_ROUTES = ['/fruit-typer', '/memorize-fruit', '/memorize-fruit-duel', '/fruit-snake-duel']
 
 function App() {
   const location = useLocation()
@@ -36,6 +37,7 @@ function App() {
             <Route path="/fruit-typer" element={<FruitTyper />} />
             <Route path="/memorize-fruit" element={<MemorizeFruit />} />
             <Route path="/memorize-fruit-duel" element={<MemorizeFruitDuelGame />} />
+            <Route path="/fruit-snake-duel" element={<FruitSnakeDuelGame />} />
             <Route path="/sprite-sandbox" element={<SpriteSandbox />} />
         </Routes>
       {isGameRoute && <Link to="/" className="back-home-link">← Back to Home</Link>}

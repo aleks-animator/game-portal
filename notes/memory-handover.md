@@ -102,6 +102,45 @@ Actual behavior:
 
 ---
 
+## FruitSnakeDuels — NEW game built (2026-07-20)
+
+New game `src/games/fruit-snake/` — a snake game wrapped in the **Duel** story (`DuelStory` + `DUEL_CONFIG`). Route `/fruit-snake-duel`, added to `App.tsx` GAME_ROUTES + Routes and to GamesPage. TS compiles clean (user verifies UI themselves — no browser test).
+
+### Files
+- `fruit-snake/gameConfig.ts` — `FruitSnakeConfig` type + `FRUIT_SNAKE_DUEL_CONFIG` (boardSize 9, targetGoal 5, initialSnakeLength 3, step/spawn speed with per-round decrement + floor, successQuality 1 / failQuality 0).
+- `fruit-snake/FruitSnake.tsx` — `FruitSnake` game component + default export `FruitSnakeDuelGame` (wires DuelStory).
+- `fruit-snake/FruitSnake.scss` — grid board (purple), green snake, pulsing target fruit.
+
+### Mechanics (first simple version, matches user spec)
+- 9×9 grid. One **target fruit** to collect; every other spawned fruit is an **obstacle**. Collect target → snake grows + new target spawns. Collect `targetGoal` (5) → `emitQuality(1)` (hero hits), new round.
+- Hit wall / self / any obstacle → `emitQuality(0)` (enemy hits, strict mode), new round.
+- Difficulty ramps **every round-end** (success OR fail): `roundRef++`, snake step faster + obstacle spawn faster (via `speedsForRound(r)`, both floored). Continuous across enemies; resets only on `startGame`.
+- Steering: arrow keys + WASD, no 180° reversal (`lastDirRef`).
+
+### Loop/lock architecture (important)
+- Logic source of truth in **refs** (snake/target/obstacles/collected/round/dir/speeds), render state mirrors them — same refs-for-logic / state-for-render rule.
+- Two self-rescheduling `setTimeout` loops (move + obstacle spawn) live in ONE effect keyed `[gameStatus, isLocked, round]`. `isLocked` (from DuelStory's useSequenceLock) tears the loops down → game auto-pauses during the VisualSelection enemy reveal AND the hit animation, then resumes. `round` dep restarts loops at the new speed.
+- `roundActiveRef` flips false the instant an outcome fires, so an in-flight spawn/step tick can't act mid-transition. `endRound()` is guarded by it (idempotent).
+
+### Open / TODO
+- `useGameEnd("fruit-snake-duel", ...)` uses a **string placeholder id**, not a real DB game UUID (MemorizeFruit uses a UUID). Score reporting won't land until a real game id exists.
+- No combo/heal wiring (emitCombo unused) — kept simple. Balance pass (speeds, quality/damage) untuned.
+
+---
+
+## Difficulty channel + Duel enemy abilities — built 2026-07-21
+
+Full design + status: [design-difficulty-channel.md](design-difficulty-channel.md). Summary:
+- **New story→game channel**: `StoryAPI.difficulty?: { value, id }` — opaque token, game interprets. Symmetric to `emitQuality` (game→story). `id` bumps per emit so repeats re-fire.
+- **`duel/duelEnemies.ts`** (NEW): `DuelEnemy` type + `DUEL_ENEMIES`, fixed ability per villain index (15 enemies). Two ability categories: Duel-internal (bonusHp / dodgeChance / doubleAttackChance) vs cross-boundary (difficulty token).
+- **`useDuel` signature changed**: now `useDuel(config, resolveEnemy)`. Applies bonusHp via `maxHpFor`.
+- **DuelStory**: dodge (in runHeroHitSequence — skips damage, 'dodge' sprite), double-attack (runEnemyHitSequence — 2nd swing), `emitDifficulty` at both VisualSelection reveal points, subtitle passed to VisualSelection. Also resets `displayEnemyCount` in startGame (replay fix).
+- **AnimatedSprite**: new `'dodge'` state + `sidestep` keyframe.
+- **VisualSelection**: new `selectionSubtitle` prop (ability blurb under the name).
+- **STILL PENDING**: FruitSnake does NOT yet read `difficulty` — token→condition lookup (map difficulty 1/2/3 to board size/speed/goal) is the next step, deliberately deferred.
+
+---
+
 ## Key patterns — follow these strictly
 
 ### Animation sequences
